@@ -1,0 +1,10 @@
+<form #checkout="ngForm" (ngSubmit)="onSubmit(checkout)" class="checkout">
+  <div class="form-row">
+    <label for="iban-element">Bank Info</label>
+    <div id="iban-element" #ibanInfo></div>
+
+    <div id="iban-errors" role="alert" *ngIf="error">{{ error }}</div>
+  </div>
+
+  <button type="submit">Pay {{orderAmt}}</button>
+</form>
