@@ -12,7 +12,7 @@ export class PaymentService extends DataService {
   url = "http://localhost:5001/api";
   constructor(_http: HttpClient) {
     super(_http);
-    this.stripe = Stripe('pk_test_7vAw4X2ah9dKeNZsQvHYRumx');
+    this.stripe = Stripe('pk_test_key');
   }
   public charge(request: ChargeRequest): Observable<any> {
     return this.post(this.url + "/charge", request);
