@@ -14,11 +14,7 @@ import com.example.stripe.model.CaptureRequest;
 import com.example.stripe.model.ChargeRequest;
 import com.example.stripe.model.RefundRequest;
 import com.example.stripe.service.StripeService;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.model.Refund;
 import com.stripe.model.Token;
@@ -35,8 +31,7 @@ public class StripeController {
 	}
 
 	@GetMapping("/mockToken")
-	public ResponseEntity<Token> generateMockToken() throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, CardException, APIException {
+	public ResponseEntity<Token> generateMockToken() throws StripeException {
 		return new ResponseEntity<Token>(stripeService.generateMockToken(), HttpStatus.OK);
 	}
 

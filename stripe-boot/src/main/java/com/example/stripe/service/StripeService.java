@@ -5,20 +5,17 @@ import java.util.Map;
 
 import com.example.stripe.model.CaptureRequest;
 import com.example.stripe.model.ChargeRequest;
+import com.example.stripe.model.PaymentIntentRequest;
 import com.example.stripe.model.RefundRequest;
 import com.stripe.Stripe;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
+import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.Refund;
 import com.stripe.model.Token;
 
 public interface StripeService {
-	public default Token generateMockToken() throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, CardException, APIException {
+	public default Token generateMockToken() throws StripeException {
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
 		Map<String, Object> cardParams = new HashMap<String, Object>();
 		Stripe.apiKey = "sk_test_u2d5PkwOdYK4T1ibHt5S73ER";
@@ -36,4 +33,6 @@ public interface StripeService {
 	Charge capture(CaptureRequest captureRequest);
 
 	Refund refund(RefundRequest refundRequest);
+
+	PaymentIntent createPaymentIntent(PaymentIntentRequest paymentIntentRequest);
 }
