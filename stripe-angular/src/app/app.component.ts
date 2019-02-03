@@ -117,20 +117,22 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
         // redirect to  confirmation page
       }
     } else if (this.selectedPaymentMethod === 'iban') {
+      const owner = this.creatMockOwner();
       const sourceData = {
         type: 'sepa_debit',
         currency: 'eur',
-        owner: this.creatMockOwner(),
+        owner: owner,
         mandate: {
           notification_method: 'email',
         }
       };
+      const that = this;
       this.stripe.createSource(this.bank, sourceData).then(function (result) {
         if (result.error) {
           // error to displayed
         } else {
-          this.pmt.savePaymentRequest(this.createPaymentRequest(result.source['id'], null, null,
-            this.creatMockOwner().email))
+          that.pmt.savePaymentRequest(that.createPaymentRequest(result.source['id'], null, null,
+            owner.email))
             .subscribe((res) => console.log(res));
         }
       });

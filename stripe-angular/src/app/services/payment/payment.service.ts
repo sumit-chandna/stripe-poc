@@ -12,7 +12,7 @@ import { PaymentRequest } from 'src/app/model/PaymentRequest';
 export class PaymentService extends DataService {
   stripe: any;
   CREATE_INTENT_URL = '/intent/create';
-  SAVE_PAYMENT_REQ = 'savePaymentRequest';
+  SAVE_PAYMENT_REQ = '/savePaymentRequest';
   GET_PAYMENT_METHODS_URL = '/getPaymentmethods/';
   PAYMENT_BETAS = 'payment_intent_beta_3';
   constructor(_http: HttpClient) {

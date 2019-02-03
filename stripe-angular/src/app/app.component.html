@@ -5,10 +5,10 @@
     <div class="well">
       <div class="form-check" [hidden]="!paymentMethods.includes('iban')">
         <input class="form-check-input" [(ngModel)]="selectedPaymentMethod" name="newAccount" type="radio" id="inlineCheckbox1"
-          value="SEPA" (change)="handleChange()">
+          value="iban" (change)="handleChange()">
         <label class=" form-check-label" for="inlineCheckbox1">Bank
           account</label>
-        <div [hidden]="selectedPaymentMethod != 'SEPA'">
+        <div [hidden]="selectedPaymentMethod != 'iban'">
           <label for="iban-element">Bank Info</label>
           <div id="iban-element" #ibanInfo></div>
           <div id="iban-errors" role="alert" *ngIf="error">{{ error }}</div>
