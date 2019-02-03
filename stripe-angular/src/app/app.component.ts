@@ -29,6 +29,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('ibanInfo') ibanInfo: ElementRef;
   cartSummary: CartSummaryDTO = new CartSummaryDTO();
   bank: any;
+  msg: string;
   card: any;
   cardHandler = this.onChange.bind(this);
   bankHandler = this.onChange.bind(this);
@@ -96,6 +97,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   async payAndPlaceOrder() {
     if (this.selectedPaymentMethod === 'buyerCredit') {
       console.log('handle on server');
+      this.msg = 'handle on server';
     } else if (this.selectedPaymentMethod === 'card') {
       const { paymentIntent, error } = await this.stripe.handleCardPayment(
         this.client_secret, this.card, {
@@ -107,6 +109,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       if (error) {
         console.log('error :', error);
         // show error
+        this.msg = 'error :' + error;
         this.pmt.savePaymentRequest(this.createPaymentRequest(null, null, null, this.creatMockOwner().email))
           .subscribe((res) => console.log(res));
       } else {
@@ -115,6 +118,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
           this.creatMockOwner().email))
           .subscribe((res) => console.log(res));
         // redirect to  confirmation page
+        this.msg = 'redirect to confirmation page';
       }
     } else if (this.selectedPaymentMethod === 'iban') {
       const owner = this.creatMockOwner();
@@ -129,11 +133,15 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       const that = this;
       this.stripe.createSource(this.bank, sourceData).then(function (result) {
         if (result.error) {
-          // error to displayed
+          this.msg = 'error :' + result.error;
         } else {
           that.pmt.savePaymentRequest(that.createPaymentRequest(result.source['id'], null, null,
             owner.email))
-            .subscribe((res) => console.log(res));
+            .subscribe((res) => {
+              console.log(res);
+              that.msg = 'redirect to confirmation page';
+            });
+
         }
       });
     }

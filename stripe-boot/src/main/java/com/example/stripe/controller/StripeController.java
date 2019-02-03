@@ -76,9 +76,9 @@ public class StripeController {
 	}
 
 	@PostMapping(value = "/savePaymentRequest", produces = "application/json")
-	public ResponseEntity<String> savePaymentRequest(@RequestBody PaymentRequest paymentRequest) {
+	public ResponseEntity<PaymentRequest> savePaymentRequest(@RequestBody PaymentRequest paymentRequest) {
 		stripeService.savePaymentRequest(paymentRequest);
-		return new ResponseEntity<>("Success", HttpStatus.OK);
+		return new ResponseEntity<PaymentRequest>(paymentRequest, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/refund")
