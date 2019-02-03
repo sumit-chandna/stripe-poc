@@ -1,9 +1,72 @@
-<div style="max-width:500px;">
-    <nav mat-tab-nav-bar>
-        <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.link" routerLinkActive #rla="routerLinkActive"
-            [active]="rla.isActive">
-            {{link.label}}
-        </a>
-    </nav>
-    <router-outlet></router-outlet>
+<h2 class="font20 bold">Payment details</h2>
+<div>Please choose a payment method for your order</div>
+<div class="row marginTB20">
+  <div class="col-md-9">
+    <div class="well">
+      <div class="form-check" [hidden]="!paymentMethods.includes('iban')">
+        <input class="form-check-input" [(ngModel)]="selectedPaymentMethod" name="newAccount" type="radio" id="inlineCheckbox1"
+          value="SEPA" (change)="handleChange()">
+        <label class=" form-check-label" for="inlineCheckbox1">Bank
+          account</label>
+        <div [hidden]="selectedPaymentMethod != 'SEPA'">
+          <label for="iban-element">Bank Info</label>
+          <div id="iban-element" #ibanInfo></div>
+          <div id="iban-errors" role="alert" *ngIf="error">{{ error }}</div>
+        </div>
+      </div>
+      <hr>
+      <div class="form-check" [hidden]="!paymentMethods.includes('card')">
+        <input class="form-check-input" [(ngModel)]="selectedPaymentMethod" name="newAccount" type="radio" id="inlineCheckbox1"
+          value="card" (change)="handleChange()">
+        <label class="form-check-label" for="inlineCheckbox1">Card payment</label>
+        <div [hidden]="selectedPaymentMethod != 'card'">
+          <label for="card-info">Card Info</label>
+          <div id="card-info" #cardInfo></div>
+          <div id="card-errors" role="alert" *ngIf="error">{{ error }}</div>
+        </div>
+      </div>
+      <hr>
+      <!-- <div class="form-check" [hidden]="!paymentMethods.includes('wechat')">
+        <input class="form-check-input" [(ngModel)]="selectedPaymentMethod" name="newAccount" type="radio" id="inlineCheckbox1"
+          value="wechat" (change)="handleChange()">
+        <label class=" form-check-label" for="inlineCheckbox1">WeChat</label>
+        <div [hidden]="selectedPaymentMethod != 'wechat'">
+          <label for="iban-element">Wechat</label>
+        </div>
+      </div>
+      <hr> -->
+      <div class="form-check" [hidden]="!paymentMethods.includes('paypal')">
+        <input class="form-check-input" [(ngModel)]="selectedPaymentMethod" name="newAccount" type="radio" id="inlineCheckbox2"
+          value="paypal" (change)="handleChange()">
+        <label class=" form-check-label" for="inlineCheckbox2">Paypal</label>
+        <div [hidden]="selectedPaymentMethod != 'paypal'">
+          paypal
+        </div>
+      </div>
+      <hr>
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="selectedPaymentMethod" name="newAccount" type="radio" id="inlineCheckbox3"
+          value="buyerCredit">
+        <label class="form-check-label" for="inlineCheckbox3">Buyer Credit</label>
+      </div>
+      <hr>
+      <div class="text-right bold">
+        Buyer Credit Amount :- <span class="text-red">{{creditAmount | number : '1.2-2'}} USD</span>
+      </div>
+    </div>
+    <div class="text-right bold marginT20">Total ({{cartSummary.totalQuantity}} units) :
+      <span class="text-red">
+        {{cartSummary.totalAmount | number : '1.2-2'}} USD
+      </span>
+    </div>
+
+    <div class="row marginT40">
+      <div class="col-6 col-sm-8 col-md-9"><a (click)="back()" href="javascript:void(0);" class="bold">&lt; Back</a></div>
+      <div class="col-6 col-sm-4 col-md-3">
+        <button (click)="payAndPlaceOrder()" class="btn btn-primary btn-block">
+          Pay And Place Order
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

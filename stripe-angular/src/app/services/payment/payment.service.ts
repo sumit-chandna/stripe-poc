@@ -2,31 +2,34 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { DataService } from '../data/data.service';
-import { ChargeRequest } from 'src/app/model/chargerequest';
 import { IntentRequest } from 'src/app/model/IntentRequest';
+import { AppSettings } from 'src/app/model/AppSettings';
+import { PaymentRequest } from 'src/app/model/PaymentRequest';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService extends DataService {
   stripe: any;
-  url = "http://localhost:5001/api";
+  CREATE_INTENT_URL = '/intent/create';
+  SAVE_PAYMENT_REQ = 'savePaymentRequest';
+  GET_PAYMENT_METHODS_URL = '/getPaymentmethods/';
+  PAYMENT_BETAS = 'payment_intent_beta_3';
   constructor(_http: HttpClient) {
     super(_http);
-    this.stripe = Stripe('pk_test_7vAw4X2ah9dKeNZsQvHYRumx', {
-      betas: ['payment_intent_beta_3']
+    this.stripe = Stripe(AppSettings.STRIP_PUBLIC_KEY, {
+      betas: [this.PAYMENT_BETAS]
     });
   }
-  public charge(request: ChargeRequest): Observable<any> {
-    return this.post(this.url + "/charge", request);
-  }
+
   public createIntent(request: IntentRequest): Observable<any> {
-    const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
-    return this.post(this.url + "/intent/create", request, options: {
-      headers?: HttpHeaders | {
-        [header: string]: string | string[];
-    };
-  });
-}
+    return this.post(AppSettings.API_ENDPOINT + this.CREATE_INTENT_URL, request);
+  }
+  public getPaymentMethods(currency: string, country: string): Observable<any> {
+    return this.get(AppSettings.API_ENDPOINT + this.GET_PAYMENT_METHODS_URL + currency + '/' + country);
+  }
+  public savePaymentRequest(request: PaymentRequest): Observable<any> {
+    return this.post(AppSettings.API_ENDPOINT + this.SAVE_PAYMENT_REQ, request);
+  }
 }
 

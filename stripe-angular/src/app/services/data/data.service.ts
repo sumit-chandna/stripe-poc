@@ -23,10 +23,11 @@ export class DataService {
             .pipe(catchError(this.handleError));
     }
     private handleError(error: Response) {
-        if (error.status === 404)
+        if (error.status === 404) {
             return throwError(new NotFoundError(error));
-        else if (error.status === 400)
+        } else if (error.status === 400) {
             return throwError(new BadRequestError(error));
+        }
         return throwError(new AppError(error));
     }
 }

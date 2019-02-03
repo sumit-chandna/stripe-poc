@@ -1,11 +1,4 @@
-/**
- * store.css
- * Stripe Payments Demo. Created by Romain Huet (@romainhuet).
- */
- @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
- .mat-tab-label-active {
-  background-color: #000;
-  color: #fff;
-  opacity: 1;
+hr {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
 }

@@ -1,8 +1,10 @@
-export class ChargeRequest {
+export class PaymentRequest {
     currency: string;
     amount: number;
     customMessage: string;
     capture: boolean;
     email: string;
-    token: any;
+    chargeId: string;
+    paymentIntentId: string;
+    paymentMethod: string;
 }

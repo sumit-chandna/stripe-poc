@@ -1,6 +1,8 @@
 package com.example.stripe.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import com.example.stripe.exception.BusinessException;
 import com.example.stripe.model.CaptureRequest;
 import com.example.stripe.model.ChargeRequest;
 import com.example.stripe.model.PaymentIntentRequest;
+import com.example.stripe.model.PaymentRequest;
 import com.example.stripe.model.RefundRequest;
 import com.example.stripe.repository.StripeDataRepository;
 import com.example.stripe.service.StripeService;
@@ -31,6 +34,40 @@ public class StripeServiceImpl implements StripeService {
 
 	private RequestOptions getRequestOptions() {
 		return RequestOptions.builder().setApiKey(stripeSecretKey).build();
+	}
+
+	private Map<String, List<String>> mockMethodsMap = new HashMap<String, List<String>>() {
+		{
+			put("usd", new ArrayList<String>() {
+				{
+					add("card");
+					add("klarna");
+					add("wechat");
+					add("paypal");
+				}
+			});
+			put("eur", new ArrayList<String>() {
+				{
+					add("card");
+					add("eps");
+					add("iban");
+					add("p24");
+					add("multibanco");
+					add("alipay");
+					add("sofort");
+					add("klarna");
+					add("wechat");
+					add("paypal");
+					add("bancontact");
+					add("giropay");
+				}
+			});
+		}
+	};
+
+	@Override
+	public List<String> getPaymentMethodsByCurrencyCode(String currencyCode, String countryCode) {
+		return mockMethodsMap.get(currencyCode);
 	}
 
 	@Override
@@ -81,10 +118,16 @@ public class StripeServiceImpl implements StripeService {
 			paymentintentParams.put("amount", paymentIntentRequest.getAmount());
 			paymentintentParams.put("currency", paymentIntentRequest.getCurrency());
 			paymentintentParams.put("allowed_source_types", paymentIntentRequest.getSources());
+			paymentintentParams.put("capture_method", "manual");
 			return PaymentIntent.create(paymentintentParams, getRequestOptions());
 		} catch (StripeException e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void savePaymentRequest(PaymentRequest paymentRequest) {
+		stripeDataRepository.savePaymentRequest(paymentRequest);
 	}
 
 }
