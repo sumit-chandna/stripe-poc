@@ -57,11 +57,11 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
         });
       if (this.paymentMethods.includes('card')) {
         this.card = this.elements.create('card');
-        this.createCard(this.elements);
+        this.createCard();
       }
       if (this.paymentMethods.includes('iban')) {
         this.bank = this.elements.create('iban', options);
-        this.createIban(this.elements);
+        this.createIban();
       }
     });
   }
@@ -73,17 +73,19 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       this.bank.clear();
     }
   }
-  createIban(element: any) {
+  createIban() {
     this.bank.mount(this.ibanInfo.nativeElement);
     this.bank.addEventListener('change', this.bankHandler);
   }
-  createCard(element: any) {
+  createCard() {
     this.card.mount(this.cardInfo.nativeElement);
     this.card.addEventListener('change', this.cardHandler);
   }
   ngOnDestroy() {
     this.card.removeEventListener('change', this.cardHandler);
     this.card.destroy();
+    this.bank.removeEventListener('change', this.cardHandler);
+    this.bank.destroy();
   }
 
   onChange({ error }) {
@@ -95,6 +97,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.cd.detectChanges();
   }
   async payAndPlaceOrder() {
+    const owner = this.creatMockOwner();
     if (this.selectedPaymentMethod === 'buyerCredit') {
       console.log('handle on server');
       this.msg = 'handle on server';
@@ -102,26 +105,22 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       const { paymentIntent, error } = await this.stripe.handleCardPayment(
         this.client_secret, this.card, {
           source_data: {
-            owner: this.creatMockOwner()
+            owner: owner
           }
         }
       );
       if (error) {
-        console.log('error :', error);
-        // show error
+        console.log('error :', error['message']);
         this.msg = 'error :' + error;
         this.pmt.savePaymentRequest(this.createPaymentRequest(null, null, null, this.creatMockOwner().email))
           .subscribe((res) => console.log(res));
       } else {
         console.log('Success :', paymentIntent);
         this.pmt.savePaymentRequest(this.createPaymentRequest(paymentIntent['source'], null, paymentIntent['id'],
-          this.creatMockOwner().email))
-          .subscribe((res) => console.log(res));
-        // redirect to  confirmation page
+          this.creatMockOwner().email)).subscribe((res) => console.log(res));
         this.msg = 'redirect to confirmation page';
       }
     } else if (this.selectedPaymentMethod === 'iban') {
-      const owner = this.creatMockOwner();
       const sourceData = {
         type: 'sepa_debit',
         currency: 'eur',
@@ -133,7 +132,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       const that = this;
       this.stripe.createSource(this.bank, sourceData).then(function (result) {
         if (result.error) {
-          this.msg = 'error :' + result.error;
+          that.msg = 'error :' + result.error['message'];
         } else {
           that.pmt.savePaymentRequest(that.createPaymentRequest(result.source['id'], null, null,
             owner.email))
@@ -146,13 +145,13 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       });
     }
   }
-  private createPaymentRequest(chargeId: string, customeMsg: string,
+  private createPaymentRequest(sourceId: string, customeMsg: string,
     intentId: string, email: string) {
     const request: PaymentRequest = new PaymentRequest();
     request.currency = AppSettings.DEFAULT_CURRENCY;
     request.amount = this.cartSummary.totalAmount;
     request.paymentMethod = this.selectedPaymentMethod;
-    request.chargeId = chargeId;
+    request.chargeId = sourceId;
     request.customMessage = customeMsg;
     request.email = email;
     request.paymentIntentId = intentId;
